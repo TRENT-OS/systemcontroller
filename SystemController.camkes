@@ -1,0 +1,55 @@
+/*
+ *  SystemController
+ *
+ *  Copyright (C) 2022, HENSOLDT Cyber GmbH
+ */
+
+#pragma once
+
+#include <plat/sysctrl.h>
+#include <plat/plat.h>
+
+#ifdef BPMP_EXISTS
+#include "BPMPServer/BPMPServer.camkes"
+#endif
+
+import <global-connectors.camkes>;
+
+HARDWARE_SYSTEM_CONTROLLER_EXTRA_IMPORTS
+
+HARDWARE_SYSTEM_CONTROLLER_COMPONENT
+
+component SystemController {
+    provides if_OS_SystemController_UART sysctrl_uart;
+
+    HARDWARE_SYSTEM_CONTROLLER_INTERFACES
+
+    /* These additional interfaces need to be connected to other components,
+       see each platform's respective sysctrl.h file */
+    HARDWARE_SYSTEM_CONTROLLER_EXTRA_INTERFACES
+#ifdef BPMP_EXISTS
+    uses if_OS_BPMP sysctrl_bpmp;
+#endif
+
+    HARDWARE_SYSTEM_CONTROLLER_ATTRIBUTES
+
+    composition {
+        HARDWARE_SYSTEM_CONTROLLER_COMPOSITION
+
+#ifdef BPMP_EXISTS
+        component BPMPServer bpmp_server;
+
+        /* Connect the bpmp 'uses' interface to the BPMPServer component using the
+         * seL4RPCDataport connector. The BPMPServer's interface should be on the 'to'
+         * side. */
+        connection seL4RPCDataport con_bpmp(from sysctrl_bpmp, to bpmp_server.the_bpmp);
+#endif
+    }
+
+    configuration {
+        HARDWARE_SYSTEM_CONTROLLER_CONFIG
+#ifdef BPMP_EXISTS
+       bpmp_server.priority     = 103;
+#endif
+    }
+}
