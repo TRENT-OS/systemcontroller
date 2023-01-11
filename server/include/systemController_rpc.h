@@ -43,6 +43,10 @@ int init_clock(sys_ctrl_ctx_t *ctx, clk_id_t clk_id);
 
 int set_gate_mode(sys_ctrl_ctx_t *ctx, clock_gate_t gate, clock_gate_mode_t mode);
 
+uint32_t get_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id);
+
+uint32_t set_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id, uint32_t clk_src);
+
 freq_t get_freq(sys_ctrl_ctx_t *ctx, clk_id_t clk_id);
 
 freq_t set_freq(sys_ctrl_ctx_t *ctx, clk_id_t clk_id, freq_t hz);

@@ -161,6 +161,78 @@ int set_gate_mode(sys_ctrl_ctx_t *ctx, clock_gate_t gate, clock_gate_mode_t mode
     return error;
 }
 
+// Get clock source
+uint32_t get_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id) {
+    uint32_t clock_source = 0;
+
+    ZF_LOGE("Called get_clock_source() with clk_id = %d", clk_id);
+
+    if(!check_valid_clk_id(clk_id)) {
+        ZF_LOGE("Invalid clock ID");
+        clock_source = 0;
+        goto out;
+    }
+
+    seL4_Word client_id = get_client_id(IF_UART);
+
+    if(!check_clk_initialised(ctx, clk_id)) {
+        ZF_LOGE("Clock isn't initialised");
+        clock_source = 0;
+        goto out;
+    }
+
+    if(!check_is_owner(ctx, clk_id, client_id)) {
+        ZF_LOGE("Client is not the owner of this clock");
+        clock_source = 0;
+        goto out;
+    }
+
+    /* Call to clk_get_source() in /util/libplatsupport/arch_include/arm/platsupport/clock.h, which
+     * redirects to the actual plat support get_source() implementation
+     */
+    clock_source = clk_get_source(ctx->clock_table[clk_id].clk);
+
+out:
+    return clock_source;
+
+}
+
+// Set clock source
+uint32_t set_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id, uint32_t clk_src) {
+    uint32_t clock_source = 0;
+
+    ZF_LOGE("Called set_clock_source() with clk_id = %d", clk_id);
+
+    if(!check_valid_clk_id(clk_id)) {
+        ZF_LOGE("Invalid clock ID");
+        clock_source = 0;
+        goto out;
+    }
+
+    seL4_Word client_id = get_client_id(IF_UART);
+
+    if(!check_clk_initialised(ctx, clk_id)) {
+        ZF_LOGE("Clock isn't initialised");
+        clock_source = 0;
+        goto out;
+    }
+
+    if(!check_is_owner(ctx, clk_id, client_id)) {
+        ZF_LOGE("Client is not the owner of this clock");
+        clock_source = 0;
+        goto out;
+    }
+
+    /* Call to clk_set_source() in /util/libplatsupport/arch_include/arm/platsupport/clock.h, which
+     * redirects to the actual plat support set_source() implementation
+     */
+    clock_source = clk_set_source(ctx->clock_table[clk_id].clk, clk_src);
+
+out:
+    return clock_source;
+
+}
+
 // Get current frequency of a clock
 freq_t get_freq(sys_ctrl_ctx_t *ctx, clk_id_t clk_id) {
     freq_t freq = 0;
@@ -487,6 +559,7 @@ static int BPMPServer_client_init(sys_ctrl_ctx_t *ctx) {
 #endif
 
 void pre_init(void) {
+    ZF_LOGE("Called pre_init()");
     sys_ctrl_ctx_t *ctx = &m_sys_ctrl_ctx;
 
     memset(ctx, 0, sizeof(*ctx));
@@ -500,6 +573,7 @@ void pre_init(void) {
 
 
 void post_init(void) {
+    ZF_LOGE("Called post_init()");
     sys_ctrl_ctx_t *ctx = &m_sys_ctrl_ctx;
     int error = SystemController_init(ctx);
     ZF_LOGF_IF(error, "Failed to initialized SystemController");

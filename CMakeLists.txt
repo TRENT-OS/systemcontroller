@@ -30,11 +30,11 @@ function(SystemController_DeclareCAmkESComponent
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/server/include/plat/${KernelPlatform}"
     )
 
-    if("${KernelPlatform}" STREQUAL "tx2")
+    if(("${KernelPlatform}" STREQUAL "tx2") OR ("${KernelPlatform}" STREQUAL "xavier"))
         set(ClockServerExtraLibs platsupportports)
     endif()
 
-    if("${KernelPlatform}" STREQUAL "tx2")
+    if(("${KernelPlatform}" STREQUAL "tx2") OR ("${KernelPlatform}" STREQUAL "xavier"))
         BPMPServer_DeclareCAmkESComponent(
             BPMPServer
         )
