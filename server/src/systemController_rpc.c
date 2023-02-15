@@ -165,8 +165,6 @@ int set_gate_mode(sys_ctrl_ctx_t *ctx, clock_gate_t gate, clock_gate_mode_t mode
 uint32_t get_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id) {
     uint32_t clock_source = 0;
 
-    ZF_LOGE("Called get_clock_source() with clk_id = %d", clk_id);
-
     if(!check_valid_clk_id(clk_id)) {
         ZF_LOGE("Invalid clock ID");
         clock_source = 0;
@@ -200,8 +198,6 @@ out:
 // Set clock source
 uint32_t set_clock_source(sys_ctrl_ctx_t *ctx, clk_id_t clk_id, uint32_t clk_src) {
     uint32_t clock_source = 0;
-
-    ZF_LOGE("Called set_clock_source() with clk_id = %d", clk_id);
 
     if(!check_valid_clk_id(clk_id)) {
         ZF_LOGE("Invalid clock ID");
@@ -237,8 +233,6 @@ out:
 freq_t get_freq(sys_ctrl_ctx_t *ctx, clk_id_t clk_id) {
     freq_t freq = 0;
 
-    ZF_LOGE("Called get_freq() with clk_id = %d", clk_id);
-
     if(!check_valid_clk_id(clk_id)) {
         ZF_LOGE("Invalid clock ID");
         freq = 0;
@@ -271,8 +265,6 @@ out:
 // Set new frequency of a clock
 freq_t set_freq(sys_ctrl_ctx_t *ctx, clk_id_t clk_id, freq_t hz) {
     freq_t set_freq = 0;
-
-    ZF_LOGE("Called set_freq() with clk_id = %d", clk_id);
 
     if(!check_valid_clk_id(clk_id)) {
         ZF_LOGE("Invalid clock ID");
@@ -559,7 +551,6 @@ static int BPMPServer_client_init(sys_ctrl_ctx_t *ctx) {
 #endif
 
 void pre_init(void) {
-    ZF_LOGE("Called pre_init()");
     sys_ctrl_ctx_t *ctx = &m_sys_ctrl_ctx;
 
     memset(ctx, 0, sizeof(*ctx));
@@ -573,7 +564,6 @@ void pre_init(void) {
 
 
 void post_init(void) {
-    ZF_LOGE("Called post_init()");
     sys_ctrl_ctx_t *ctx = &m_sys_ctrl_ctx;
     int error = SystemController_init(ctx);
     ZF_LOGF_IF(error, "Failed to initialized SystemController");
